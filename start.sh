@@ -8,24 +8,24 @@ if [ -z "$TZ" ]; then
 fi
 
 # Get current version
-[ -f /data/HomeSeer/version.txt ] && VERSION=$(cat /data/HomeSeer/version.txt)
+[ -f /opt/homeseer/version.txt ] && VERSION=$(cat /opt/homeseer/version.txt)
 
 # Get remote version
-HS_URL=$(curl -sL http://homeseer.com/current-downloads.html | grep -Po 'http://homeseer.com/updates3/hs3_linux_3[0-9_.]+.tar.gz')
+HS_URL=$(curl -sL https://homeseer.com/current-downloads.html | grep -Po 'https://homeseer.com/updates3/hs3_linux_3[0-9_.]+.tar.gz')
 
 # Download and untar if versions are not the same
 if [ "$VERSION" != "$HS_URL" ]; then
   echo "Downloading $HS_URL ..."
-  mkdir -p /data/HomeSeer && ln -s /data/HomeSeer /usr/local/HomeSeer
-  wget -qO - "${HS_URL}" | tar -C /data/HomeSeer -zx --strip-components 1
-  echo "$HS_URL" > /data/HomeSeer/version.txt
+  mkdir -p /data/HomeSeer && ln -s /opt/homeseer /usr/local/homeseer
+  wget -qO - "${HS_URL}" | tar -C /opt/homeseer -zx --strip-components 1
+  echo "$HS_URL" > /opt/homeseer/version.txt
 fi
 
-chown -R root:root /data
+chown -R root:root /opt/homeseer
 
 # bug fix for case sensitive filesystems
 # without this myhs.homeseer.com wont load icons
-ln -sf /data/HomeSeer/html/images/homeseer /data/HomeSeer/html/images/HomeSeer
+ln -sf /opt/homeseer/html/images/homeseer /opt/homeseer/html/images/HomeSeer
 
 # Execute
-cd /data/HomeSeer && exec mono HSConsole.exe --log
+cd /opt/homeseer && exec mono HSConsole.exe --log
